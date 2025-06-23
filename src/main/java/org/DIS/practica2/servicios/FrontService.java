@@ -72,4 +72,24 @@ public class FrontService {
             throw new RuntimeException(e);
         }
     }
+    public Turismo crearTurismo(Turismo turismo) {
+        String url = String.format("%s/db", URL_API);
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            Gson gson = new Gson();
+            String json = gson.toJson(turismo);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(url))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return gson.fromJson(response.body(), Turismo.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
