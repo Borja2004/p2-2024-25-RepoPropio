@@ -1,88 +1,94 @@
 package org.DIS.practica2.modelos;
 
-import com.nimbusds.jose.shaded.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName;
+import org.DIS.practica2.modelos.Destino;
+import org.DIS.practica2.modelos.Origen;
+import org.DIS.practica2.modelos.Periodo;
 
 import java.util.UUID;
 
 public class Turismo {
+
     private int total;
 
     @SerializedName("_id")
-    private String _id;
+    private String id;
 
     @SerializedName("destino")
-    private Destino to;
+    private Destino destino;
 
     @SerializedName("periodo")
-    private Periodo timeRange;
+    private Periodo periodo;
 
     @SerializedName("origen")
-    private Origen from;
+    private Origen origen;
+
+    public Turismo(Origen origen, Destino destino, Periodo periodo, int total) {
+        this.origen = origen;
+        this.destino = destino;
+        this.periodo = periodo;
+        this.id = UUID.randomUUID().toString();
+        this.total = total;
+    }
+
+    public Turismo(Origen origen, Destino destino, Periodo periodo, int total, String id) {
+        this.origen = origen;
+        this.destino = destino;
+        this.periodo = periodo;
+        this.id = id;
+        this.total = total;
+    }
+
+    // Getters
+    public String getId() {
+        return id;
+    }
 
     public Origen getOrigen() {
-        return from;
+        return origen;
     }
 
     public Destino getDestino() {
-        return to;
-    }
-
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
+        return destino;
     }
 
     public Periodo getPeriodo() {
-        return timeRange;
+        return periodo;
     }
 
     public int getTotal() {
         return total;
     }
 
-    public void setOrigen(Origen from) {
-        this.from = from;
+    // Setters
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setDestino(Destino to) {
-        this.to = to;
+    public void setOrigen(Origen origen) {
+        this.origen = origen;
     }
 
-    public void setPeriodo(Periodo timeRange) {
-        this.timeRange = timeRange;
+    public void setDestino(Destino destino) {
+        this.destino = destino;
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
     }
 
     public void setTotal(int total) {
         this.total = total;
     }
 
-    public Turismo(Origen from, Destino to, Periodo timeRange, int total) {
-        this.from = from;
-        this.to = to;
-        this.timeRange = timeRange;
-        this._id = UUID.randomUUID().toString();
-        this.total = total;
-    }
-
-    public Turismo(Origen from, Destino to, Periodo timeRange, int total, String id) {
-        this.from = from;
-        this.to = to;
-        this.timeRange = timeRange;
-        this._id = id;
-        this.total = total;
-    }
-
     @Override
     public String toString() {
         return "Turismo{" +
-                "_id=" + _id +
-                ", origen=" + from +
-                ", destino=" + to +
-                ", periodo=" + timeRange +
+                "id='" + id + '\'' +
+                ", origen=" + origen +
+                ", destino=" + destino +
+                ", periodo=" + periodo +
                 ", total=" + total +
-                '}';
+            '}';
     }
 }
