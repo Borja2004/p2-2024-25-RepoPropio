@@ -112,4 +112,27 @@ public class FrontService {
             throw new RuntimeException("Error al obtener las comunidades: " + e.getMessage(), e);
         }
     }
+    public ArrayList<Turismo> getTurismoByComunidad(String comunidad) {
+        try {
+            String comunidadCodificada = URLEncoder.encode(comunidad, StandardCharsets.UTF_8.toString())
+                    .replace("+", "%20");
+            String url = String.format("%s/comunidades/%s", URL_API, comunidadCodificada);
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(url))
+                    .header("Content-Type", "application/json")
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<Turismo>>() {}.getType();
+            return gson.fromJson(response.body(), listType);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener los datos por comunidad: ", e);
+        }
+    }
+
 }
