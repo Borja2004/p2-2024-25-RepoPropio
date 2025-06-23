@@ -11,6 +11,7 @@ import org.DIS.practica2.servicios.FrontService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class GridTurismos extends VerticalLayout {
@@ -27,6 +28,19 @@ public class GridTurismos extends VerticalLayout {
     private static final String FECHA_FIN="Fecha Fin";
 
     public GridTurismos(FrontService service) {
+        listaTurismos = Optional.ofNullable(service.getTurismos()).orElse(new ArrayList<>());
+        dataProvider = new ListDataProvider<>(listaTurismos);
+        grid.setDataProvider(dataProvider);
+
+        // Columnas principales
+        Grid.Column<Turismo> colComOrigen = grid.addColumn(t -> t.getOrigen().getComunidad())
+                .setHeader(COMUNIDAD_ORIGEN).setSortable(true);
+        Grid.Column<Turismo> colComDestino = grid.addColumn(t -> t.getDestino().getComunidad())
+                .setHeader(COMUNIDAD_DESTINO).setSortable(true);
+        Grid.Column<Turismo> colFechaInicio = grid.addColumn(t -> t.getPeriodo().getFecha_inicio())
+                .setHeader(FECHA_INICIO).setSortable(true);
+        Grid.Column<Turismo> colFechaFin = grid.addColumn(t -> t.getPeriodo().getFecha_fin())
+                .setHeader(FECHA_FIN).setSortable(true);
 
     }
 }
