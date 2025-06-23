@@ -1,16 +1,23 @@
 package org.DIS.practica2.modelos;
 
+import java.time.LocalDate;
+
 public class Periodo {
     private String fecha_inicio;
-    private String period;
     private String fecha_fin;
+    private String period;
 
-    public String getPeriodo() {
-        return period;
-    }
+    public Periodo(String fecha_inicio, String fecha_fin) {
+        this.fecha_inicio = fecha_inicio;
+        this.fecha_fin = fecha_fin;
 
-    public void setPeriodo(String periodo) {
-        this.period = periodo;
+        // Calcular el periodo en formato "YYYYMM"
+        String[] partes = fecha_inicio.split("-");
+        if (partes.length >= 2) {
+            this.period = partes[0] + "M" + partes[1];
+        } else {
+            this.period = "";
+        }
     }
 
     public String getFecha_inicio() {
@@ -29,11 +36,21 @@ public class Periodo {
         this.fecha_fin = fecha_fin;
     }
 
-    public Periodo(String fecha_inicio, String fecha_fin) {
-        this.fecha_inicio = fecha_inicio;
-        this.fecha_fin = fecha_fin;
-        String[] fecha_inicio_splited = fecha_inicio.split("-");
-        this.period = fecha_inicio_splited[0] + "M" + fecha_inicio_splited[1];
+    public String getPeriodo() {
+        return period;
+    }
+
+    public void setPeriodo(String period) {
+        this.period = period;
+    }
+
+    // Métodos auxiliares para trabajar con LocalDate
+    public LocalDate getLocalDateInicio() {
+        return LocalDate.parse(fecha_inicio);
+    }
+
+    public LocalDate getLocalDateFin() {
+        return LocalDate.parse(fecha_fin);
     }
 
     @Override
@@ -42,6 +59,6 @@ public class Periodo {
                 "fecha_inicio='" + fecha_inicio + '\'' +
                 ", periodo='" + period + '\'' +
                 ", fecha_fin='" + fecha_fin + '\'' +
-                '}';
+            '}';
     }
 }
