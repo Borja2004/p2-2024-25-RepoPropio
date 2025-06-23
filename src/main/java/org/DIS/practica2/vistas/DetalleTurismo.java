@@ -1,10 +1,17 @@
 package org.DIS.practica2.vistas;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import org.DIS.practica2.modelos.Destino;
+import org.DIS.practica2.modelos.Origen;
+import org.DIS.practica2.modelos.Periodo;
 import org.DIS.practica2.modelos.Turismo;
 import org.DIS.practica2.servicios.FrontService;
 
@@ -74,7 +81,18 @@ public class DetalleTurismo {
         dialog.getFooter().add(cancelar, guardar);
         return dialog;
     }
+    private VerticalLayout crearLayoutFormulario() {
+        HorizontalLayout layoutOrigen = new HorizontalLayout(comunidadOrigen, provinciaOrigen);
+        HorizontalLayout layoutDestino = new HorizontalLayout(comunidadDestino, provinciaDestino);
+        HorizontalLayout layoutFechas = new HorizontalLayout(fechaInicio, fechaFin);
 
+        VerticalLayout layout = new VerticalLayout(layoutOrigen, layoutDestino, layoutFechas, total);
+        layout.setPadding(false);
+        layout.setSpacing(false);
+        layout.setAlignItems(FlexComponent.Alignment.STRETCH);
+        layout.getStyle().set("width", "18rem").set("max-width", "100%");
+        return layout;
+        }
     private void setDatePickerLocale(DatePicker picker) {
         picker.setI18n(new DatePicker.DatePickerI18n()
                 .setDateFormat("yyyy-MM-dd")
