@@ -92,4 +92,24 @@ public class FrontService {
             throw new RuntimeException(e);
         }
     }
+
+    public ArrayList<String> getComunidades() {
+        String url = String.format("%s/comunidades", URL_API);
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(url))
+                    .header("Content-Type", "application/json")
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+            return gson.fromJson(response.body(), listType);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener las comunidades: " + e.getMessage(), e);
+        }
+    }
 }
