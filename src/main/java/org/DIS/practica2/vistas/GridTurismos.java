@@ -2,11 +2,15 @@ package org.DIS.practica2.vistas;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import org.DIS.practica2.modelos.Turismo;
 import org.DIS.practica2.servicios.FrontService;
+import org.springframework.cglib.core.internal.Function;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,5 +46,53 @@ public class GridTurismos extends VerticalLayout {
         Grid.Column<Turismo> colFechaFin = grid.addColumn(t -> t.getPeriodo().getFecha_fin())
                 .setHeader(FECHA_FIN).setSortable(true);
 
+        // Filtros
+        HeaderRow filtroRow = grid.appendHeaderRow();
+        añadirFiltroTexto(filtroRow, colComOrigen, t -> t.getOrigen().getComunidad(), COMUNIDAD_ORIGEN);
+        añadirFiltroTexto(filtroRow, colComDestino, t -> t.getDestino().getComunidad(), COMUNIDAD_DESTINO);
+        añadirFiltroFecha(filtroRow, colFechaInicio, t -> t.getPeriodo().getFecha_inicio(), FECHA_INICIO);
+        añadirFiltroFecha(filtroRow, colFechaFin, t -> t.getPeriodo().getFecha_fin(), FECHA_FIN);
+
+        // Grid
+        grid.setWidthFull();
+        grid.setMultiSort(true);
+        grid.addClassName("grid-turismos");
+        grid.setEmptyStateText("No se han encontrado resultados");
+
+    }
+    private void añadirFiltroTexto(HeaderRow row, Grid.Column<Turismo> col,
+                                   Function<Turismo, String> valueProvider, String placeholder) {
+        TextField filterField = new TextField();
+        filterField.setPlaceholder(placeholder);
+        filterField.setValueChangeMode(ValueChangeMode.EAGER);
+        filterField.addValueChangeListener(e -> {
+            String valor = e.getValue().trim();
+            if (valor.isEmpty()) {
+                filtrosActivos.remove(col);
+            } else {
+                filtrosActivos.put(col, t -> {
+                    String val = valueProvider.apply(t);
+                    return val != null && val.toLowerCase().contains(valor.toLowerCase());
+                });
+            }
+            aplicarFiltros();
+        });
+        row.getCell(col).setComponent(filterField);
+        filterField.setSizeFull();
+    }
+    private void aplicarFiltros() {
+        dataProvider.setFilter(t -> filtrosActivos.values().stream().allMatch(f -> f.test(t)));
+        actualizarResultadoSpan();
+    }
+    private void actualizarResultadoSpan() {
+        int total = dataProvider.size(new com.vaadin.flow.data.provider.Query<>());
+        resultadoSpan.setText("Resultados encontrados: " + total);
+    }
+
+    public void refrescarGrid(ArrayList<Turismo> nuevaLista) {
+        dataProvider.getItems().clear();
+        dataProvider.getItems().addAll(nuevaLista);
+        dataProvider.refreshAll();
+        actualizarResultadoSpan();
     }
 }
