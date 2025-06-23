@@ -1,6 +1,7 @@
 package org.DIS.practica2.vistas;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Span;
@@ -12,10 +13,8 @@ import org.DIS.practica2.modelos.Turismo;
 import org.DIS.practica2.servicios.FrontService;
 import org.springframework.cglib.core.internal.Function;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class GridTurismos extends VerticalLayout {
@@ -95,4 +94,35 @@ public class GridTurismos extends VerticalLayout {
         dataProvider.refreshAll();
         actualizarResultadoSpan();
     }
+    private void añadirFiltroFecha(HeaderRow row, Grid.Column<Turismo> col,
+                                   Function<Turismo, String> valueProvider, String placeholder) {
+        DatePicker picker = new DatePicker();
+        picker.setPlaceholder(placeholder);
+        picker.setI18n(new DatePicker.DatePickerI18n()
+                .setDateFormat("yyyy-MM-dd")
+                .setFirstDayOfWeek(1)
+                .setMonthNames(List.of("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"))
+                .setWeekdays(List.of("Domingo", "Lunes", "Martes", "Miércoles", "Jueves",
+                        "Viernes", "Sábado"))
+                .setWeekdaysShort(List.of("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"))
+                .setToday("Hoy").setCancel("Cancelar"));
+
+        picker.addValueChangeListener(e -> {
+            LocalDate seleccion = e.getValue();
+            if (seleccion == null) {
+                filtrosActivos.remove(col);
+            } else {
+                filtrosActivos.put(col, t -> {
+                    LocalDate val = LocalDate.parse(valueProvider.apply(t));
+                    return val.equals(seleccion);
+                });
+            }
+            aplicarFiltros();
+        });
+
+        row.getCell(col).setComponent(picker);
+        picker.setSizeFull();
+    }
+
 }
