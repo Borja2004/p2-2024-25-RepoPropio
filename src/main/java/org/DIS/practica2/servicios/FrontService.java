@@ -6,8 +6,10 @@ import org.DIS.practica2.modelos.Turismo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -36,5 +38,38 @@ public class FrontService {
             throw new RuntimeException(e);
         }
     }
+    public Turismo getTurismo(String id) throws IOException, InterruptedException, URISyntaxException {
+        String url = String.format("%s/db/%s", URL_API, id);
+        HttpClient client = HttpClient.newHttpClient();
 
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(url))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Gson gson = new Gson();
+        return gson.fromJson(response.body(), Turismo.class);
+    }
+
+    public Turismo editarTurismo(String id, Turismo turismo) {
+        String url = String.format("%s/db/%s", URL_API, id);
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            Gson gson = new Gson();
+            String json = gson.toJson(turismo);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(url))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return gson.fromJson(response.body(), Turismo.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
